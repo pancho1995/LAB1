@@ -17,7 +17,7 @@
         tools:layout_editor_absoluteY="1dp">
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/HomeFragmentTitle"
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/converter"
@@ -27,7 +27,7 @@
             android:layout_marginBottom="16dp"/>
 
         <Spinner
-            android:id="@+id/spinner3"
+            android:id="@+id/spinnerFromCurrency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="false"
@@ -36,7 +36,7 @@
             />
 
         <EditText
-            android:id="@+id/editTextNumberDecimal5"
+            android:id="@+id/editTextNumberDecimalFromValue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -47,7 +47,7 @@
             />
 
         <Spinner
-            android:id="@+id/spinner4"
+            android:id="@+id/spinnerToCurrency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -55,7 +55,7 @@
             />
 
         <EditText
-            android:id="@+id/editTextNumberDecimal6"
+            android:id="@+id/editTextNumberDecimalToValue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"

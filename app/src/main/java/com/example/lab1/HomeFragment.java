@@ -32,14 +32,17 @@ public class HomeFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Spinner s = (Spinner) view.findViewById(R.id.spinner3);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(s.getContext(),
+        Spinner spinnerFromCurrency = (Spinner) view.findViewById(R.id.spinnerFromCurrency);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(spinnerFromCurrency.getContext(),
                 R.array.currencies, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        s.setAdapter(adapter);
+        spinnerFromCurrency.setAdapter(adapter);
 
-        TextView amount = view.findViewById(R.id.editTextNumberDecimal5);
-        amount.addTextChangedListener(
+        Spinner spinnerToCurrency = (Spinner) view.findViewById(R.id.spinnerToCurrency);
+        spinnerToCurrency.setAdapter(adapter);
+
+        TextView amountFromCurrency = view.findViewById(R.id.editTextNumberDecimalFromValue);
+        amountFromCurrency.addTextChangedListener(
                 new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -49,7 +52,7 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                         if(charSequence.length() != 0) {
-                            convertCurrency(amount.getText().toString());
+                            convertCurrency(amountFromCurrency.getText().toString());
                         } else {
                             convertCurrency("");
                         }
@@ -73,11 +76,11 @@ public class HomeFragment extends Fragment {
     }
     public void convertCurrency(String amount) {
         if(amount == "" || amount == null) {
-            TextView result = getView().findViewById(R.id.editTextNumberDecimal6);
-            result.setText("");
+            TextView amountToCurrency = getView().findViewById(R.id.editTextNumberDecimalToValue);
+            amountToCurrency.setText("");
         } else {
             double converted = Double.parseDouble(amount) * 0.01;
-            TextView result = getView().findViewById(R.id.editTextNumberDecimal6);
+            TextView result = getView().findViewById(R.id.editTextNumberDecimalToValue);
             result.setText(converted + "");
         }
         //logika za konvertovanje

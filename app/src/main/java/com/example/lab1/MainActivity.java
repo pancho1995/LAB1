@@ -60,9 +60,9 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_rates) {
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-            navController.navigate(R.id.action_FirstFragment_to_SecondFragment);
+            navController.navigate(R.id.action_HomeFragment_to_RatesFragment);
         }
 
         return super.onOptionsItemSelected(item);
