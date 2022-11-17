@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rates"
+        android:gravity="center_horizontal"
+        android:textSize="40sp"
+        />
+    <LinearLayout
+        android:id="@+id/linear"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true"
+        >
+        <LinearLayout
+            android:id="@+id/rowView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            >
+<!--            <TextView-->
+<!--                android:id="@+id/columnName"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="TEST"-->
+<!--                android:gravity="center_horizontal" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/columnValue"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="TEST"-->
+<!--                android:gravity="center_horizontal"-->
+<!--                />-->
+        </LinearLayout>
+
+<!--        <LinearLayout-->
+<!--            android:id="@+id/rateValues"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            android:layout_toRightOf="@+id/rowView"-->
+<!--            >-->
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="TEST"-->
+<!--                android:gravity="center_horizontal" />-->
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:text="TEST"-->
+<!--                android:gravity="center_horizontal"-->
+<!--                />-->
+<!--        </LinearLayout>-->
+
+    </LinearLayout>
+</RelativeLayout>
+
+<!--        <Button-->
+<!--            android:id="@+id/button_second"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/previous"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/textview_second" />-->
