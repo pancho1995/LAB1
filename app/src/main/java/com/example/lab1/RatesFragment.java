@@ -5,17 +5,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.example.lab1.databinding.ActivityMainBinding;
 import com.example.lab1.databinding.FragmentRatesBinding;
 
 public class RatesFragment extends Fragment {
 
     private FragmentRatesBinding binding;
+    private Toolbar toolbar;
 
     @Override
     public View onCreateView(
@@ -38,31 +40,33 @@ public class RatesFragment extends Fragment {
 //                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
 //            }
 //        });
+
+        toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.getMenu().getItem(0).setVisible(false);
+
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowView);
         String [] currencies = getResources().getStringArray(R.array.currencies);
 
         for (String curr: currencies) {
-            LinearLayout horLayout = new LinearLayout(view.getContext());
-            horLayout.setOrientation(LinearLayout.HORIZONTAL);
-//            horLayout.layout(16, 0, 16, 0);
-
-
             TextView txtView = new TextView(view.getContext());
-            txtView.setText(curr);
-            txtView.setWidth(300);
-
-            TextView value = new TextView(view.getContext());
-            value.setText("0.93");
-            value.setWidth(300);
-            value.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-
-            horLayout.addView(txtView);
-            horLayout.addView(value);
-
-//            horLayout.setHorizontalGravity(Gravity.RIGHT);
-            linearLayout.addView(horLayout);
+            txtView.setText(justifyText(curr));
+            txtView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            txtView.setTextSize(30);
+            txtView.setPadding(10, 10, 10, 0);
+            linearLayout.addView(txtView);
         }
 
+    }
+
+    private String justifyText(String textToJustify) {
+        String [] textSeparated = textToJustify.split(";");
+        while (textSeparated[0].length() < 20) {
+            textSeparated[0] += " ";
+        }
+        while (textSeparated[1].length() != 7) {
+            textSeparated[1] += "0";
+        }
+        return textSeparated[0] + textSeparated[1];
     }
 
     @Override

@@ -1,15 +1,13 @@
 <resources>
     <string name="app_name">LAB1</string>
-    <string name="action_settings">Settings</string>
     <string name="action_rates">Rates</string>
+
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">Home</string>
     <string name="rates_fragment_label">Rates</string>
-
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <!-- ######################################### -->
 
     <string name="converter">Currency Converter</string>
-    <string name="hello_second_fragment">Settings</string>
+    <string name="title_rates_fragment">USD 1$</string>
     <string name="convert">Convert</string>
 </resources>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="currencies">
-        <item>EUR</item>
-        <item>SEK</item>
-        <item>USD</item>
-        <item>GBP</item>
-        <item>CNY</item>
-        <item>JPY</item>
-        <item>KRW</item>
+        <item>EUR;0.96</item>
+        <item>SEK;0.094</item>
+        <item>USD;1.0</item>
+        <item>GBP;1.19</item>
+        <item>CNY;0.14</item>
+        <item>JPY;0.0071</item>
+        <item>KRW;0.00075</item>
     </string-array>
 </resources>
