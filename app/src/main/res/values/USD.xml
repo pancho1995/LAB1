@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="USD">
+        <item name="EUR">EUR;0.97</item>
+        <item name="USD">USD;1.00</item>
+        <item name="SEK">SEK;10.65</item>
+        <item name="GBP">GBP;0.84</item>
+        <item name="CNY">CNY;7.12</item>
+        <item name="JPY">JPY;140.35</item>
+        <item name="KRW">KRW;1340.03</item>
+    </string-array>
+</resources>
