@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     >
 
-    <TextView
-        android:id="@+id/title"
+    <Spinner
+        android:id="@+id/curr_change"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -14,14 +14,14 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:gravity="center_horizontal"
-        android:text="@string/title_rates_fragment"
-        android:textSize="40sp" />
+        android:textSize="40sp"
+        />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/scroll"
-        android:layout_below ="@id/title"
+        android:layout_below ="@id/curr_change"
         >
 
         <LinearLayout

@@ -4,7 +4,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +21,8 @@ public class RatesFragment extends Fragment {
 
     private FragmentRatesBinding binding;
     private Toolbar toolbar;
+    private String [] currencies;
+    private View view;
 
     @Override
     public View onCreateView(
@@ -32,7 +37,7 @@ public class RatesFragment extends Fragment {
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        this.view = view;
 //        binding.buttonSecond.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -41,25 +46,31 @@ public class RatesFragment extends Fragment {
 //            }
 //        });
 
+        Spinner spinnerCurr_Change = (Spinner) view.findViewById(R.id.curr_change);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(spinnerCurr_Change.getContext(),
+                R.array.currencies_for_select, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCurr_Change.setAdapter(adapter);
+
+        spinnerCurr_Change.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String selectedBase = spinnerCurr_Change.getSelectedItem().toString();
+                fetchDataFromResource(selectedBase);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.getMenu().getItem(0).setVisible(false);
-
-        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowView);
-        String [] currencies = getResources().getStringArray(R.array.currencies);
-
-        for (String curr: currencies) {
-            TextView txtView = new TextView(view.getContext());
-            txtView.setText(justifyText(curr));
-            txtView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            txtView.setTextSize(30);
-            txtView.setPadding(10, 10, 10, 0);
-            linearLayout.addView(txtView);
-        }
-
     }
 
     private String justifyText(String textToJustify) {
-        String [] textSeparated = textToJustify.split(";");
+        String[] textSeparated = textToJustify.split(";");
         while (textSeparated[0].length() < 20) {
             textSeparated[0] += " ";
         }
@@ -67,6 +78,46 @@ public class RatesFragment extends Fragment {
             textSeparated[1] += "0";
         }
         return textSeparated[0] + textSeparated[1];
+    }
+
+    private void fetchDataFromResource(String baseCurrency) {
+
+        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowView);
+        linearLayout.removeAllViews();
+        this.currencies = null;
+
+        switch (baseCurrency) {
+            case "EUR":
+                this.currencies = getResources().getStringArray(R.array.EUR);
+                break;
+            case "SEK":
+                this.currencies = getResources().getStringArray(R.array.SEK);
+                break;
+            case "USD":
+                this.currencies = getResources().getStringArray(R.array.USD);
+                break;
+            case "GBP":
+                this.currencies = getResources().getStringArray(R.array.GBP);
+                break;
+            case "CNY":
+                this.currencies = getResources().getStringArray(R.array.CNY);
+                break;
+            case "JPY":
+                this.currencies = getResources().getStringArray(R.array.JPY);
+                break;
+            case "KRW":
+                this.currencies = getResources().getStringArray(R.array.KRW);
+                break;
+        }
+
+        for (String curr : this.currencies) {
+            TextView txtView = new TextView(view.getContext());
+            txtView.setText(justifyText(curr));
+            txtView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            txtView.setTextSize(30);
+            txtView.setPadding(10, 10, 10, 0);
+            linearLayout.addView(txtView);
+        }
     }
 
     @Override
