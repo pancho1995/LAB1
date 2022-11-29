@@ -46,17 +46,22 @@ public class RatesFragment extends Fragment {
 //            }
 //        });
 
+        String baseCurrency = ((MainActivity)getActivity()).getBaseCurrency();
+
         Spinner spinnerCurr_Change = (Spinner) view.findViewById(R.id.curr_change);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(spinnerCurr_Change.getContext(),
                 R.array.currencies_for_select, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCurr_Change.setAdapter(adapter);
+        if(baseCurrency != null) {
+            setSelectionByUserLocation(baseCurrency);
+        }
 
         spinnerCurr_Change.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selectedBase = spinnerCurr_Change.getSelectedItem().toString();
-                fetchDataFromResource(selectedBase);
+                fetchDataFromResourceFixed(selectedBase);
             }
 
             @Override
@@ -80,7 +85,7 @@ public class RatesFragment extends Fragment {
         return textSeparated[0] + textSeparated[1];
     }
 
-    private void fetchDataFromResource(String baseCurrency) {
+    private void fetchDataFromResourceFixed(String baseCurrency) {
 
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowView);
         linearLayout.removeAllViews();
@@ -118,6 +123,32 @@ public class RatesFragment extends Fragment {
             txtView.setPadding(10, 10, 10, 0);
             linearLayout.addView(txtView);
         }
+    }
+
+    private void setSelectionByUserLocation(String country) {
+
+        Spinner spinnerCurr_Change = view.findViewById(R.id.curr_change);
+        switch (country) {
+            case "United States":
+                spinnerCurr_Change.setSelection(2);
+                break;
+            case "Sweden":
+                spinnerCurr_Change.setSelection(1);
+                break;
+            case "Great Britain":
+                spinnerCurr_Change.setSelection(3);
+                break;
+            case "China":
+                spinnerCurr_Change.setSelection(4);
+                break;
+            case "Japan":
+                spinnerCurr_Change.setSelection(5);
+                break;
+            case "South Korea":
+                spinnerCurr_Change.setSelection(6);
+                break;
+        }
+
     }
 
     @Override
