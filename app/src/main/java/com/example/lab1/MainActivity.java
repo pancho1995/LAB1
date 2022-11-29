@@ -49,7 +49,6 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private RequestQueue requestQueue;
     private static final String APIKEY = "N1q1IQ4i70DFKCJe1NCLQO6txefww27c";
     public String lastFetchedDate = "";
+    public boolean readFromOldResource = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,13 +92,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }, 101);
         } else {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            enableLocationService();
             getLocation();
+
+            Location currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            System.out.println("current " + currentLocation);
         }
 
         if(isNetworkAvailable()) {
             if(checkIfFileExist("lastFetchedDate.txt")) {
-
                 try {
                     String lastDateFetched = readFromFile("lastFetchedDate.txt");
                     lastFetchedDate = lastDateFetched;
@@ -131,10 +132,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             if(checkIfFileExist("lastFetchedDate.txt")) {
                 try {
                     this.lastFetchedDate = readFromFile("lastFetchedDate.txt");
-                    System.out.println(lastFetchedDate + " zadnji");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            } else {
+                readFromOldResource = true;
             }
         }
 
@@ -331,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                             boolean success = response.getBoolean("success");
                             String date = response.getString("date");
                             JSONObject rates = response.getJSONObject("rates");
-
+                            lastFetchedDate = date;
                             if (success) {
                                 writeIntoFile(rates.toString(), base);
                             }
@@ -402,5 +404,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     public String getLastFetchedDate() {
         return this.lastFetchedDate;
+    }
+    public boolean getReadFromOldResource() {
+        return this.readFromOldResource;
     }
 }

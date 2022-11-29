@@ -26,8 +26,9 @@ public class RatesFragment extends Fragment {
 
     private FragmentRatesBinding binding;
     private Toolbar toolbar;
-    private String [] currencies;
+    private String[] currencies;
     private View view;
+    private boolean readFromOldResource = false;
 
     @Override
     public View onCreateView(
@@ -51,16 +52,18 @@ public class RatesFragment extends Fragment {
 //            }
 //        });
         TextView ratesOnDate = getActivity().findViewById(R.id.ratesOnDate);
-        ratesOnDate.setText(((MainActivity)getActivity()).getLastFetchedDate());
+        ratesOnDate.setText(((MainActivity) getActivity()).getLastFetchedDate());
+        readFromOldResource = ((MainActivity) getActivity()).getReadFromOldResource();
 
-        String baseCurrency = ((MainActivity)getActivity()).getBaseCurrency();
+        String baseCurrency = ((MainActivity) getActivity()).getBaseCurrency();
 
         Spinner spinnerCurr_Change = (Spinner) view.findViewById(R.id.curr_change);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(spinnerCurr_Change.getContext(),
                 R.array.currencies_for_select, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCurr_Change.setAdapter(adapter);
-        if(baseCurrency != null) {
+
+        if (baseCurrency != null) {
             setSelectionByUserLocation(baseCurrency);
         }
 
@@ -68,12 +71,16 @@ public class RatesFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selectedBase = spinnerCurr_Change.getSelectedItem().toString();
-//                fetchDataFromResourceFixed(selectedBase);
-                try {
-                    fetchDataFromResourceAPI(selectedBase);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (readFromOldResource) {
+                    fetchDataFromResourceFixed(selectedBase);
+                } else {
+                    try {
+                        fetchDataFromResourceAPI(selectedBase);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+
             }
 
             @Override
@@ -134,6 +141,10 @@ public class RatesFragment extends Fragment {
                 break;
         }
 
+        TextView dateRates = getView().findViewById(R.id.ratesOnDate);
+        String lastDateFetched = ((MainActivity) getActivity()).getLastFetchedDate();
+        dateRates.setText(lastDateFetched);
+
         for (String curr : this.currencies) {
             TextView txtView = new TextView(view.getContext());
             txtView.setText(curr);
@@ -142,7 +153,6 @@ public class RatesFragment extends Fragment {
             txtView.setPadding(10, 10, 10, 0);
             linearLayout.addView(txtView);
         }
-
 
     }
 
@@ -218,16 +228,16 @@ public class RatesFragment extends Fragment {
         File fileToRead = getActivity().getBaseContext().getFileStreamPath(filename);
         BufferedReader br = new BufferedReader(new FileReader(fileToRead));
         String tempLine = br.readLine();
-        while(tempLine != null) {
+        while (tempLine != null) {
             output += tempLine;
             tempLine = br.readLine();
         }
         return output;
     }
 
-    private String [] justifyRatesFromAPI(String rates) {
-        rates = rates.substring(1, rates.length()-1);
-        String [] ratesArr = rates.split(",");
+    private String[] justifyRatesFromAPI(String rates) {
+        rates = rates.substring(1, rates.length() - 1);
+        String[] ratesArr = rates.split(",");
         return ratesArr;
     }
 
