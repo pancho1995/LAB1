@@ -10,10 +10,17 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 
-
-import com.example.lab1.databinding.FragmentRatesBinding;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
@@ -22,6 +29,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -30,15 +45,20 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.lab1.databinding.ActivityMainBinding;
 
-import android.os.PersistableBundle;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Spinner;
+import android.widget.TextView;
 
-import java.io.IOException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
@@ -46,9 +66,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private ActivityMainBinding binding;
     public LocationManager locationManager;
     Spinner spinnerFromCurrency;
-    Spinner spinnerCurr_Change;
     public String baseCurrency;
-    private boolean permissionAllowed = false;
+    public String dateToday = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+    private RequestQueue requestQueue;
+    private static final String APIKEY = "N1q1IQ4i70DFKCJe1NCLQO6txefww27c";
+    public String lastFetchedDate = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-        if(ContextCompat.checkSelfPermission(this,  android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{
                     android.Manifest.permission.ACCESS_COARSE_LOCATION
@@ -74,6 +96,48 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             getLocation();
         }
 
+        if(isNetworkAvailable()) {
+            if(checkIfFileExist("lastFetchedDate.txt")) {
+
+                try {
+                    String lastDateFetched = readFromFile("lastFetchedDate.txt");
+                    lastFetchedDate = lastDateFetched;
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    boolean isLatestDataFetched = !sdf.parse(lastDateFetched).before(sdf.parse(dateToday));
+                    if(!isLatestDataFetched) {
+                        String[] currForBase = getResources().getStringArray(R.array.currencies_for_select);
+                        for (String base : currForBase) {
+                            fetchDataFromAPI(base);
+                        }
+                        writeIntoFile(dateToday, "lastFetchedDate");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                String[] currForBase = getResources().getStringArray(R.array.currencies_for_select);
+                for (String base : currForBase) {
+                    fetchDataFromAPI(base);
+                }
+                try {
+                    writeIntoFile(dateToday, "lastFetchedDate");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            if(checkIfFileExist("lastFetchedDate.txt")) {
+                try {
+                    this.lastFetchedDate = readFromFile("lastFetchedDate.txt");
+                    System.out.println(lastFetchedDate + " zadnji");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
 //        binding.fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -81,12 +145,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 //                        .setAction("Action", null).show();
 //            }
 //        });
+
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             enableLocationService();
             getLocation();
@@ -103,13 +168,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 //    @Override
 //    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
 //        super.onSaveInstanceState(outState, outPersistentState);
-//        outState.putString("country", this.currentLocation);
 //    }
 //
 //    @Override
 //    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 //        super.onRestoreInstanceState(savedInstanceState);
-//        String country = savedInstanceState.getString("country");
 //    }
 
     @Override
@@ -245,5 +308,99 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     public String getBaseCurrency() {
         return baseCurrency;
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void fetchDataFromAPI(String base) {
+        System.out.println("API called");
+        requestQueue = Volley.newRequestQueue(this);
+        String url = "https://api.apilayer.com/exchangerates_data/latest?symbols=EUR%2CGBP%2CSEK%2CJPY%2CCNY%2CSEK%2CUSD%20&base=" + base;
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+
+                            boolean success = response.getBoolean("success");
+                            String date = response.getString("date");
+                            JSONObject rates = response.getJSONObject("rates");
+
+                            if (success) {
+                                writeIntoFile(rates.toString(), base);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("apikey", APIKEY);
+                return params;
+            }
+        };
+        requestQueue.add(request);
+    }
+
+    private void writeIntoFile(String jsonData, String base) throws IOException {
+        File path = this.getFilesDir();
+        File latest_rates = new File(path, base + ".txt");
+
+        FileOutputStream stream = new FileOutputStream(latest_rates);
+        try {
+            stream.write(jsonData.getBytes());
+        } finally {
+            stream.close();
+        }
+    }
+
+    public boolean checkIfFileExist(String filename){
+        File file = getBaseContext().getFileStreamPath(filename);
+        return file.exists();
+    }
+
+    public String readFromFile(String filename) throws IOException {
+
+        String output = "";
+        File fileToRead = getBaseContext().getFileStreamPath(filename);
+        BufferedReader br = new BufferedReader(new FileReader(fileToRead));
+        String tempLine = br.readLine();
+        while(tempLine != null) {
+            output += tempLine;
+            tempLine = br.readLine();
+        }
+        return output;
+    }
+
+    private void helper() throws IOException {
+        File path = this.getFilesDir();
+        File latest_rates = new File(path, "lastFetchedDate.txt");
+
+        FileOutputStream stream = new FileOutputStream(latest_rates);
+        try {
+            stream.write(("2022-11-28").getBytes());
+        } finally {
+            stream.close();
+        }
+    }
+
+    public String getLastFetchedDate() {
+        return this.lastFetchedDate;
     }
 }

@@ -17,6 +17,11 @@ import androidx.fragment.app.Fragment;
 import com.example.lab1.databinding.ActivityMainBinding;
 import com.example.lab1.databinding.FragmentRatesBinding;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class RatesFragment extends Fragment {
 
     private FragmentRatesBinding binding;
@@ -45,6 +50,8 @@ public class RatesFragment extends Fragment {
 //                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
 //            }
 //        });
+        TextView ratesOnDate = getActivity().findViewById(R.id.ratesOnDate);
+        ratesOnDate.setText(((MainActivity)getActivity()).getLastFetchedDate());
 
         String baseCurrency = ((MainActivity)getActivity()).getBaseCurrency();
 
@@ -61,7 +68,12 @@ public class RatesFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selectedBase = spinnerCurr_Change.getSelectedItem().toString();
-                fetchDataFromResourceFixed(selectedBase);
+//                fetchDataFromResourceFixed(selectedBase);
+                try {
+                    fetchDataFromResourceAPI(selectedBase);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -74,8 +86,9 @@ public class RatesFragment extends Fragment {
         toolbar.getMenu().getItem(0).setVisible(false);
     }
 
-    private String justifyText(String textToJustify) {
-        String[] textSeparated = textToJustify.split(";");
+    private String justifyText(String textToJustify, Boolean fromAPI) {
+        String regex = fromAPI ? ":" : ";";
+        String[] textSeparated = textToJustify.split(regex);
         while (textSeparated[0].length() < 20) {
             textSeparated[0] += " ";
         }
@@ -83,6 +96,54 @@ public class RatesFragment extends Fragment {
             textSeparated[1] += "0";
         }
         return textSeparated[0] + textSeparated[1];
+    }
+
+    private void fetchDataFromResourceAPI(String baseCurrency) throws IOException {
+        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowView);
+        linearLayout.removeAllViews();
+        this.currencies = null;
+
+        switch (baseCurrency) {
+            case "EUR":
+                String euroRates = readFromFile("EUR.txt");
+                this.currencies = justifyRatesFromAPI(euroRates);
+                break;
+            case "SEK":
+                String sekRates = readFromFile("SEK.txt");
+                this.currencies = justifyRatesFromAPI(sekRates);
+                break;
+            case "USD":
+                String usdRates = readFromFile("USD.txt");
+                this.currencies = justifyRatesFromAPI(usdRates);
+                break;
+            case "GBP":
+                String gbpRates = readFromFile("GBP.txt");
+                this.currencies = justifyRatesFromAPI(gbpRates);
+                break;
+            case "CNY":
+                String cnyRates = readFromFile("CNY.txt");
+                this.currencies = justifyRatesFromAPI(cnyRates);
+                break;
+            case "JPY":
+                String jpyRates = readFromFile("JPY.txt");
+                this.currencies = justifyRatesFromAPI(jpyRates);
+                break;
+            case "KRW":
+                String krwRates = readFromFile("KRW.txt");
+                this.currencies = justifyRatesFromAPI(krwRates);
+                break;
+        }
+
+        for (String curr : this.currencies) {
+            TextView txtView = new TextView(view.getContext());
+            txtView.setText(curr);
+            txtView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            txtView.setTextSize(30);
+            txtView.setPadding(10, 10, 10, 0);
+            linearLayout.addView(txtView);
+        }
+
+
     }
 
     private void fetchDataFromResourceFixed(String baseCurrency) {
@@ -117,7 +178,7 @@ public class RatesFragment extends Fragment {
 
         for (String curr : this.currencies) {
             TextView txtView = new TextView(view.getContext());
-            txtView.setText(justifyText(curr));
+            txtView.setText(justifyText(curr, false));
             txtView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             txtView.setTextSize(30);
             txtView.setPadding(10, 10, 10, 0);
@@ -149,6 +210,25 @@ public class RatesFragment extends Fragment {
                 break;
         }
 
+    }
+
+    private String readFromFile(String filename) throws IOException {
+
+        String output = "";
+        File fileToRead = getActivity().getBaseContext().getFileStreamPath(filename);
+        BufferedReader br = new BufferedReader(new FileReader(fileToRead));
+        String tempLine = br.readLine();
+        while(tempLine != null) {
+            output += tempLine;
+            tempLine = br.readLine();
+        }
+        return output;
+    }
+
+    private String [] justifyRatesFromAPI(String rates) {
+        rates = rates.substring(1, rates.length()-1);
+        String [] ratesArr = rates.split(",");
+        return ratesArr;
     }
 
     @Override
