@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             getLocation();
 
             Location currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            System.out.println("current " + currentLocation);
+
         }
 
         if(isNetworkAvailable()) {
@@ -320,7 +320,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     private void fetchDataFromAPI(String base) {
-        System.out.println("API called");
         requestQueue = Volley.newRequestQueue(this);
         String url = "https://api.apilayer.com/exchangerates_data/latest?symbols=EUR%2CGBP%2CSEK%2CJPY%2CCNY%2CSEK%2CUSD%20&base=" + base;
 

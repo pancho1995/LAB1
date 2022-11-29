@@ -248,12 +248,12 @@ public class HomeFragment extends Fragment {
         switch (currencyFrom) {
             case "EUR":
                 String currencyEur = readFromFile("EUR.txt");
-                currencyEur = currencyEur.substring(0, currencyEur.length() - 1);
+                currencyEur = currencyEur.substring(1, currencyEur.length() - 1);
                 String[] currencies = currencyEur.split(",");
                 for (String curr : currencies) {
-                    String rate = curr.split(":")[1];
+                    String rate = curr.split(":")[1] + "";
                     String currencyTo1 = curr.split(":")[0];
-                    currencyTo1 = currencyTo1.substring(0, currencyTo1.length() - 1);
+                    currencyTo1 = currencyTo1.substring(1, currencyTo1.length() - 1);
                     if (currencyTo.equalsIgnoreCase(currencyTo1)) {
                         convertCurrency(amount, Double.parseDouble(rate));
                     }
@@ -264,7 +264,7 @@ public class HomeFragment extends Fragment {
                 currencyUsd = currencyUsd.substring(1, currencyUsd.length() - 1);
                 String[] currenciesFromDollar = currencyUsd.split(",");
                 for (String curr : currenciesFromDollar) {
-                    String rate = curr.split(":")[1];
+                    String rate = curr.split(":")[1] + "";
                     String currencyTo1 = curr.split(":")[0];
                     currencyTo1 = currencyTo1.substring(1, currencyTo1.length() - 1);
                     if (currencyTo.equalsIgnoreCase(currencyTo1)) {
@@ -277,7 +277,7 @@ public class HomeFragment extends Fragment {
                 currencySek = currencySek.substring(1, currencySek.length() - 1);
                 String[] currenciesFromSek = currencySek.split(",");
                 for (String curr : currenciesFromSek) {
-                    String rate = curr.split(":")[1];
+                    String rate = curr.split(":")[1] + "";
                     String currencyTo1 = curr.split(":")[0];
                     currencyTo1 = currencyTo1.substring(1, currencyTo1.length() - 1);
                     if (currencyTo.equalsIgnoreCase(currencyTo1)) {
@@ -290,7 +290,7 @@ public class HomeFragment extends Fragment {
                 currencyGbp = currencyGbp.substring(1, currencyGbp.length() - 1);
                 String[] currenciesFromGbp = currencyGbp.split(",");
                 for (String curr : currenciesFromGbp) {
-                    String rate = curr.split(":")[1];
+                    String rate = curr.split(":")[1] + "";
                     String currencyTo1 = curr.split(":")[0];
                     currencyTo1 = currencyTo1.substring(1, currencyTo1.length() - 1);
                     if (currencyTo.equalsIgnoreCase(currencyTo1)) {
@@ -303,7 +303,7 @@ public class HomeFragment extends Fragment {
                 currencyCny = currencyCny.substring(1, currencyCny.length() - 1);
                 String[] currenciesFromCny = currencyCny.split(",");
                 for (String curr : currenciesFromCny) {
-                    String rate = curr.split(":")[1];
+                    String rate = curr.split(":")[1] + "";
                     String currencyTo1 = curr.split(":")[0];
                     currencyTo1 = currencyTo1.substring(1, currencyTo1.length() - 1);
                     if (currencyTo.equalsIgnoreCase(currencyTo1)) {
@@ -316,7 +316,7 @@ public class HomeFragment extends Fragment {
                 currencyJpy = currencyJpy.substring(1, currencyJpy.length() - 1);
                 String[] currenciesFromJpy = currencyJpy.split(",");
                 for (String curr : currenciesFromJpy) {
-                    String rate = curr.split(":")[1];
+                    String rate = curr.split(":")[1] + "";
                     String currencyTo1 = curr.split(":")[0];
                     currencyTo1 = currencyTo1.substring(1, currencyTo1.length() - 1);
                     if (currencyTo.equalsIgnoreCase(currencyTo1)) {
@@ -329,7 +329,7 @@ public class HomeFragment extends Fragment {
                 currencyKrw = currencyKrw.substring(1, currencyKrw.length() - 1);
                 String[] currenciesFromKrw = currencyKrw.split(",");
                 for (String curr : currenciesFromKrw) {
-                    String rate = curr.split(":")[1];
+                    String rate = curr.split(":")[1] + "";
                     String currencyTo1 = curr.split(":")[0];
                     currencyTo1 = currencyTo1.substring(1, currencyTo1.length() - 1);
                     if (currencyTo.equalsIgnoreCase(currencyTo1)) {
