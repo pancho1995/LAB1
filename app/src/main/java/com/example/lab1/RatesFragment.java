@@ -92,53 +92,26 @@ public class RatesFragment extends Fragment {
         toolbar.getMenu().getItem(0).setVisible(false);
     }
 
-    private String justifyText(String textToJustify, Boolean fromAPI) {
-        String regex = fromAPI ? ":" : ";";
-        String[] textSeparated = textToJustify.split(regex);
-        while (textSeparated[0].length() < 20) {
+    private String justifyText(String textToJustify) {
+        String[] textSeparated = textToJustify.split(":");
+        String currFrom = textSeparated[0].substring(1, textSeparated[0].length() -1);
+        while (currFrom.length() < 20) {
             textSeparated[0] += " ";
         }
-        while (textSeparated[1].length() != 7) {
+        while (textSeparated[1].length() != 20) {
             textSeparated[1] += "0";
         }
         return textSeparated[0] + textSeparated[1];
     }
 
     private void fetchDataFromResourceAPI(String baseCurrency) throws IOException {
+
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.rowView);
         linearLayout.removeAllViews();
         this.currencies = null;
 
-        switch (baseCurrency) {
-            case "EUR":
-                String euroRates = readFromFile("EUR.txt");
-                this.currencies = justifyRatesFromAPI(euroRates);
-                break;
-            case "SEK":
-                String sekRates = readFromFile("SEK.txt");
-                this.currencies = justifyRatesFromAPI(sekRates);
-                break;
-            case "USD":
-                String usdRates = readFromFile("USD.txt");
-                this.currencies = justifyRatesFromAPI(usdRates);
-                break;
-            case "GBP":
-                String gbpRates = readFromFile("GBP.txt");
-                this.currencies = justifyRatesFromAPI(gbpRates);
-                break;
-            case "CNY":
-                String cnyRates = readFromFile("CNY.txt");
-                this.currencies = justifyRatesFromAPI(cnyRates);
-                break;
-            case "JPY":
-                String jpyRates = readFromFile("JPY.txt");
-                this.currencies = justifyRatesFromAPI(jpyRates);
-                break;
-            case "KRW":
-                String krwRates = readFromFile("KRW.txt");
-                this.currencies = justifyRatesFromAPI(krwRates);
-                break;
-        }
+        String rates = readFromFile(baseCurrency +".txt");
+        this.currencies = justifyRatesFromAPI(rates);
 
         TextView dateRates = getView().findViewById(R.id.ratesOnDate);
         String lastDateFetched = ((MainActivity) getActivity()).getLastFetchedDate();
@@ -148,7 +121,7 @@ public class RatesFragment extends Fragment {
             TextView txtView = new TextView(view.getContext());
             txtView.setText(curr);
             txtView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            txtView.setTextSize(30);
+            txtView.setTextSize(20);
             txtView.setPadding(10, 10, 10, 0);
             linearLayout.addView(txtView);
         }
@@ -187,7 +160,7 @@ public class RatesFragment extends Fragment {
 
         for (String curr : this.currencies) {
             TextView txtView = new TextView(view.getContext());
-            txtView.setText(justifyText(curr, false));
+            txtView.setText(justifyText(curr));
             txtView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             txtView.setTextSize(30);
             txtView.setPadding(10, 10, 10, 0);
@@ -221,11 +194,16 @@ public class RatesFragment extends Fragment {
 
     }
 
+    public boolean checkIfFileExist(String filename){
+        File file = getActivity().getBaseContext().getFileStreamPath(filename);
+        return file.exists();
+    }
+
     private String readFromFile(String filename) throws IOException {
-        System.out.println("outputt");
+        boolean fileExist = checkIfFileExist(filename);
+        System.out.println(fileExist + " postoji");
         String output = "";
         File fileToRead = getActivity().getBaseContext().getFileStreamPath(filename);
-
         BufferedReader br = new BufferedReader(new FileReader(fileToRead));
 
         String tempLine = br.readLine();
@@ -234,12 +212,12 @@ public class RatesFragment extends Fragment {
             output += tempLine;
             tempLine = br.readLine();
         }
-        System.out.println("stize li ovde");
         return output;
     }
 
     private String[] justifyRatesFromAPI(String rates) {
         rates = rates.substring(1, rates.length() - 1);
+
         String[] ratesArr = rates.split(",");
         return ratesArr;
     }
@@ -249,5 +227,7 @@ public class RatesFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+
 
 }

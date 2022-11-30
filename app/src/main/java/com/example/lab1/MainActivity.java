@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public String baseCurrency;
     public String dateToday = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
     private RequestQueue requestQueue;
-    private static final String APIKEY = "N1q1IQ4i70DFKCJe1NCLQO6txefww27c";
+    private static final String APIKEY = "Diw0uMnYS6LvKbgYp3LJguvceInfGKjY";
     public String lastFetchedDate = "";
     public boolean readFromOldResource = false;
 
