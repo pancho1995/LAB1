@@ -29,6 +29,7 @@ public class RatesFragment extends Fragment {
     private String[] currencies;
     private View view;
     private boolean readFromOldResource = false;
+    public String baseCurrency;
 
     @Override
     public View onCreateView(
@@ -54,8 +55,7 @@ public class RatesFragment extends Fragment {
         TextView ratesOnDate = getActivity().findViewById(R.id.ratesOnDate);
         ratesOnDate.setText(((MainActivity) getActivity()).getLastFetchedDate());
         readFromOldResource = ((MainActivity) getActivity()).getReadFromOldResource();
-
-        String baseCurrency = ((MainActivity) getActivity()).getBaseCurrency();
+        baseCurrency = ((MainActivity) getActivity()).getBaseCurrency();
 
         Spinner spinnerCurr_Change = (Spinner) view.findViewById(R.id.curr_change);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(spinnerCurr_Change.getContext(),
@@ -66,7 +66,6 @@ public class RatesFragment extends Fragment {
         if (baseCurrency != null) {
             setSelectionByUserLocation(baseCurrency);
         }
-
         spinnerCurr_Change.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -223,15 +222,19 @@ public class RatesFragment extends Fragment {
     }
 
     private String readFromFile(String filename) throws IOException {
-
+        System.out.println("outputt");
         String output = "";
         File fileToRead = getActivity().getBaseContext().getFileStreamPath(filename);
+
         BufferedReader br = new BufferedReader(new FileReader(fileToRead));
+
         String tempLine = br.readLine();
+
         while (tempLine != null) {
             output += tempLine;
             tempLine = br.readLine();
         }
+        System.out.println("stize li ovde");
         return output;
     }
 

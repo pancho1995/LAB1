@@ -27,6 +27,7 @@ public class HomeFragment extends Fragment {
     private Spinner spinnerFromCurrency;
     private Spinner spinnerToCurrency;
     private String amount;
+    private String country;
     private boolean useOldResource = false;
 
     @Override
@@ -61,6 +62,10 @@ public class HomeFragment extends Fragment {
         spinnerToCurrency.setAdapter(adapter);
         this.spinnerToCurrency = spinnerToCurrency;
         this.useOldResource = ((MainActivity) getActivity()).getReadFromOldResource();
+        this.country = ((MainActivity) getActivity()).getBaseCurrency();
+        if(country != null) {
+            setSelectionByUserLocation(country);
+        }
 
         spinnerFromCurrency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -357,6 +362,31 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void setSelectionByUserLocation(String country) {
+
+        switch (country) {
+            case "United States":
+                spinnerFromCurrency.setSelection(2);
+                break;
+            case "Sweden":
+                spinnerFromCurrency.setSelection(1);
+                break;
+            case "Great Britain":
+                spinnerFromCurrency.setSelection(3);
+                break;
+            case "China":
+                spinnerFromCurrency.setSelection(4);
+                break;
+            case "Japan":
+                spinnerFromCurrency.setSelection(5);
+                break;
+            case "South Korea":
+                spinnerFromCurrency.setSelection(6);
+                break;
+        }
+
     }
 
 

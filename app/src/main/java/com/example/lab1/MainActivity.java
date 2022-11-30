@@ -92,10 +92,23 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }, 101);
         } else {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            getLocation();
+            enableLocationService();
+//            getLocation();
 
             Location currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
+            Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+            List<Address> addresses = null;
+            if(currentLocation != null) {
+                try {
+                    addresses = geocoder.getFromLocation(currentLocation.getLatitude(), currentLocation.getLongitude(), 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                baseCurrency = addresses.get(0).getCountryName();
+                spinnerFromCurrency = findViewById(R.id.spinnerFromCurrency);
+                setSelectionByUserLocation(baseCurrency);
+            }
         }
 
         if(isNetworkAvailable()) {
@@ -157,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             enableLocationService();
             getLocation();
+//            setSelectionByUserLocation(baseCurrency);
         }
     }
 
@@ -234,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     void getLocation() {
         try {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 500, 1000, (LocationListener) this);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, (LocationListener) this);
         } catch (SecurityException e) {
             e.printStackTrace();
         }
