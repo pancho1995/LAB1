@@ -93,15 +93,19 @@ public class RatesFragment extends Fragment {
     }
 
     private String justifyText(String textToJustify) {
+        System.out.println(textToJustify + " metoda");
         String[] textSeparated = textToJustify.split(":");
         String currFrom = textSeparated[0].substring(1, textSeparated[0].length() -1);
-        while (currFrom.length() < 20) {
-            textSeparated[0] += " ";
+        while (currFrom.length() < 7) {
+            currFrom += " ";
         }
-        while (textSeparated[1].length() != 20) {
+        while (textSeparated[1].length() != 10) {
+            if(textSeparated[1].equalsIgnoreCase("1")) {
+                textSeparated[1] = "1.0";
+            }
             textSeparated[1] += "0";
         }
-        return textSeparated[0] + textSeparated[1];
+        return currFrom + textSeparated[1];
     }
 
     private void fetchDataFromResourceAPI(String baseCurrency) throws IOException {
@@ -119,9 +123,9 @@ public class RatesFragment extends Fragment {
 
         for (String curr : this.currencies) {
             TextView txtView = new TextView(view.getContext());
-            txtView.setText(curr);
+            txtView.setText(justifyText(curr));
             txtView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            txtView.setTextSize(20);
+            txtView.setTextSize(25);
             txtView.setPadding(10, 10, 10, 0);
             linearLayout.addView(txtView);
         }
